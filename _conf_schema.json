@@ -1,0 +1,126 @@
+{
+  "enabled": {
+    "description": "开启启动动画",
+    "type": "bool",
+    "default": true,
+    "hint": "关闭后完全不向 AstrBot 管理面板注入启动动画。"
+  },
+  "sound": {
+    "description": "播放影片声音",
+    "type": "bool",
+    "default": true,
+    "hint": "浏览器仍可能要求先点击一次画面，才允许播放声音。"
+  },
+  "click_to_enter": {
+    "description": "点鼠标直接进入",
+    "type": "bool",
+    "default": false,
+    "hint": "打开后，点击画面会直接进入管理面板；关闭时第一次点击优先尝试开启声音。"
+  },
+  "show_hint": {
+    "description": "显示底部提示文字",
+    "type": "bool",
+    "default": true,
+    "hint": "只控制底部操作提示；启动标题不受影响。"
+  },
+  "code_animation_mode": {
+    "description": "代码启动动画",
+    "type": "string",
+    "default": "off",
+    "options": ["off", "before_video", "only"],
+    "labels": ["关闭", "先播放代码动画，再播放视频", "只播放代码动画"],
+    "subtitles": ["沿用视频启动流程", "代码动画结束后继续单段或双段视频", "代码动画结束后直接进入 AstrBot"]
+  },
+  "code_animation_theme": {
+    "description": "代码动画主题",
+    "type": "string",
+    "default": "light",
+    "options": ["light", "dark"],
+    "labels": ["暖白", "暗色"]
+  },
+  "code_animation_speed": {
+    "description": "代码动画速度",
+    "type": "string",
+    "default": "1",
+    "options": ["0.75", "1", "1.25", "1.5", "2"],
+    "labels": ["0.75×", "1×", "1.25×", "1.5×", "2×"]
+  },
+  "code_animation_interactive": {
+    "description": "代码动画要求确认",
+    "type": "bool",
+    "default": false,
+    "hint": "开启后，动画前两步会等待点击、Enter 或空格；关闭后自动连续播放。"
+  },
+  "code_animation_sound": {
+    "description": "代码动画语音和音效",
+    "type": "bool",
+    "default": false,
+    "hint": "浏览器仍可能要求先点击一次，才允许播放声音。"
+  },
+  "fade_ms": {
+    "description": "淡入时长",
+    "type": "string",
+    "default": "2000",
+    "options": ["1000", "1500", "2000", "3000", "4000"],
+    "labels": ["1 秒", "1.5 秒", "2 秒", "3 秒", "4 秒"]
+  },
+  "entry_mode": {
+    "description": "进入方式",
+    "type": "string",
+    "default": "crossfade",
+    "options": ["crossfade", "after", "click"],
+    "labels": ["片尾交叉溶解", "放完再淡", "点击才进"],
+    "subtitles": ["片尾开始淡出，影片结束时正好进入", "影片完整播放后再淡出", "影片循环，直到点击或按快捷键"]
+  },
+  "play_sequence": {
+    "description": "视频播放段数",
+    "type": "string",
+    "default": "single",
+    "options": ["single", "double"],
+    "labels": ["只播放一段视频", "依次播放前后两段视频"],
+    "subtitles": ["播放单段视频后进入面板", "先播放前段，再播放后段，最后进入面板"]
+  },
+  "single_clip": {
+    "description": "单段视频文件",
+    "type": "string",
+    "default": "deepseek-brand-intro.mp4",
+    "hint": "只播放一段视频时使用。填写 assets/videos 目录中的完整文件名。"
+  },
+  "opening_clip": {
+    "description": "前段视频文件",
+    "type": "string",
+    "default": "deepseek-awakening-intro.mp4",
+    "hint": "两段模式首先播放的视频。填写 assets/videos 目录中的完整文件名。"
+  },
+  "closing_clip": {
+    "description": "后段视频文件",
+    "type": "string",
+    "default": "deepseek-startup-intro.mp4",
+    "hint": "两段模式随后播放的视频；播放完成后进入面板。"
+  },
+  "open_video_folder": {
+    "description": "打开视频文件夹",
+    "type": "bool",
+    "default": false,
+    "hint": "打开后保存配置，插件会跳转到 assets/videos 文件夹，并自动把此开关复位。"
+  },
+  "clips": {
+    "description": "素材池",
+    "type": "list",
+    "default": [
+      "deepseek-awakening-intro.mp4",
+      "deepseek-brand-intro.mp4",
+      "deepseek-cyberpunk-intro.mp4",
+      "deepseek-startup-intro.mp4"
+    ],
+    "options": [
+      "deepseek-awakening-intro.mp4",
+      "deepseek-brand-intro.mp4",
+      "deepseek-cyberpunk-intro.mp4",
+      "deepseek-startup-intro.mp4"
+    ],
+    "labels": ["觉醒片头", "品牌片头", "赛博朋克片头", "启动片头"],
+    "hint": "勾选参与随机播放的影片。也可以把 mp4/webm/m4v/mov 文件放入插件的 assets/videos 目录，然后重载插件。"
+  }
+}
+
