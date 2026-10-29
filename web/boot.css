@@ -1,0 +1,125 @@
+#astrbot-boot-animation {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483647;
+  display: grid;
+  overflow: hidden;
+  background: transparent;
+  color: #effbff;
+  font-family: Inter, "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  opacity: 1;
+  transition: opacity var(--astrbot-boot-fade, 2000ms) cubic-bezier(.2,.7,.2,1);
+}
+
+#astrbot-boot-animation.astrbot-boot-leaving {
+  opacity: 0;
+  pointer-events: none;
+}
+
+#astrbot-panel-animated-background {
+  inset: 0;
+  position: fixed;
+  z-index: 2147483646;
+  overflow: hidden;
+  pointer-events: none;
+  background: radial-gradient(circle at 50% 34%, #123852 0, #071724 48%, #02070d 100%);
+  opacity: 1;
+  transition: opacity var(--astrbot-boot-fade, 2000ms) cubic-bezier(.2,.7,.2,1);
+}
+
+#astrbot-panel-animated-background.astrbot-boot-leaving {
+  opacity: 0;
+}
+
+#astrbot-panel-animated-background video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transform: none;
+  filter: none;
+  transition: opacity 700ms ease;
+  background: #02070d;
+}
+
+#astrbot-panel-animated-background video.astrbot-boot-visible { opacity: 1; }
+
+/* The boot script runs in the document head. This gate guarantees that the
+   Dashboard cannot flash before the intro has handed control over. */
+html.astrbot-boot-pending #app {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+html.astrbot-panel-entering #app {
+  opacity: 1 !important;
+  transition: opacity var(--astrbot-boot-fade, 2000ms) cubic-bezier(.2,.7,.2,1);
+}
+
+.astrbot-code-animation-frame {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483647;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: #050608;
+}
+
+.astrbot-boot-shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(1,7,12,.08), transparent 58%, rgba(1,7,12,.72));
+  pointer-events: none;
+}
+
+.astrbot-boot-title {
+  position: absolute;
+  left: clamp(22px, 5vw, 72px);
+  top: clamp(22px, 5vw, 64px);
+  letter-spacing: .18em;
+  font-size: clamp(18px, 2.2vw, 32px);
+  font-weight: 650;
+  text-shadow: 0 2px 24px rgba(0,0,0,.5);
+}
+
+.astrbot-boot-foot {
+  position: absolute;
+  left: clamp(22px, 5vw, 72px);
+  right: clamp(22px, 5vw, 72px);
+  bottom: clamp(24px, 5vw, 58px);
+  display: grid;
+}
+
+.astrbot-boot-hint {
+  min-height: 20px;
+  font-size: 13px;
+  letter-spacing: .08em;
+  color: rgba(235,249,255,.84);
+  text-shadow: 0 1px 12px rgba(0,0,0,.7);
+}
+
+.astrbot-boot-skip {
+  position: absolute;
+  top: clamp(20px, 4vw, 48px);
+  right: clamp(20px, 4vw, 48px);
+  border: 1px solid rgba(235,249,255,.38);
+  border-radius: 999px;
+  padding: 7px 15px;
+  color: inherit;
+  background: rgba(2,11,18,.32);
+  backdrop-filter: blur(12px);
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+}
+
+.astrbot-boot-skip:hover { background: rgba(235,249,255,.14); }
+
+@media (prefers-reduced-motion: reduce) {
+  #astrbot-boot-animation,
+  #astrbot-panel-animated-background video { transition-duration: 1ms !important; }
+}
+
