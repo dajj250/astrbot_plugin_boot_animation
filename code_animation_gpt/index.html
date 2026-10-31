@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>OpenAI GPT Codex</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="stage" id="stage">
+    <div class="grain" aria-hidden="true"></div>
+    <section class="phase phase-logo" aria-label="GPT startup">
+      <div class="gpt-mark hero-mark" aria-label="OpenAI GPT">
+        <img src="./openai-white-monoblossom.svg" alt="OpenAI Blossom">
+      </div>
+      <p class="boot-label">GPT / CODEX</p>
+    </section>
+    <section class="phase phase-loading" aria-label="System loading">
+      <header><span>OPENAI LAB / ASTRBOT NODE</span><span id="clock">00:00:00</span></header>
+      <div class="loading-layout">
+        <div class="loading-copy">
+          <p class="eyebrow">GPT RUNTIME INITIALIZATION</p>
+          <h1>SYSTEM<br><strong>LOADING</strong></h1>
+          <p class="load-note" id="loadNote">正在建立安全模型通道</p>
+        </div>
+        <div class="diagnostic">
+          <div class="diagnostic-head"><span>codex://laboratory/bootstrap</span><i>LIVE</i></div>
+          <div class="diagnostic-body" id="loadTerminal"></div>
+          <div class="scanner-ring" aria-hidden="true"><i></i><i></i><b></b></div>
+        </div>
+      </div>
+      <div class="checkpoint" id="accessCheckpoint" hidden>
+        <p class="checkpoint-index">01 / AUTHORIZATION</p>
+        <h2 id="accessTitle">需 要 访 问 许 可</h2>
+        <p class="checkpoint-en" id="accessEnglish">ACCESS PERMISSION REQUIRED</p>
+        <p class="checkpoint-hint">按 Enter / Space，或点击右上角按钮继续</p>
+      </div>
+    </section>
+    <section class="phase phase-code" aria-label="Codex code sequence">
+      <header><span>CODEX EXECUTION ENVIRONMENT</span><span>SECURE SESSION</span></header>
+      <div class="code-layout">
+        <aside class="code-aside">
+          <div class="gpt-mark mini-mark" aria-hidden="true">
+            <img src="./openai-white-monoblossom.svg" alt="">
+          </div>
+          <p>OPENAI</p><h2>GPT<br><strong>CODEX</strong></h2>
+          <dl><dt>MODEL</dt><dd>ONLINE</dd><dt>TOOLS</dt><dd>READY</dd><dt>ASTRBOT</dt><dd>LINKED</dd></dl>
+        </aside>
+        <main class="code-panel">
+          <div class="tabs"><span class="active">startup.ts</span><span>runtime.log</span><span>tools.json</span></div>
+          <div class="code-screen" id="codeTerminal"></div>
+        </main>
+      </div>
+      <div class="checkpoint identity-checkpoint" id="identityCheckpoint" hidden>
+        <p class="checkpoint-index">02 / IDENTITY</p>
+        <h2>身 份 资 料 确 认</h2>
+        <p class="checkpoint-en">IDENTITY VERIFICATION</p>
+        <dl class="identity-fields"><dt>身份名称</dt><dd>ASTRBOT</dd><dt>身份编号</dt><dd>0001</dd><dt>权限等级</dt><dd>3</dd></dl>
+        <p class="checkpoint-hint">按 Enter / Space，或点击右上角按钮继续</p>
+      </div>
+      <div class="welcome" id="welcome"><small>SESSION INITIALIZED</small><span>WELCOME OPENAI GPT CODEX</span></div>
+    </section>
+    <div class="stage-actions">
+      <button id="advance" class="advance" type="button" hidden>授予访问权限 <span>GRANT ACCESS</span></button>
+      <button id="skip" class="skip" type="button">SKIP ▸</button>
+    </div>
+  </div>
+  <script src="./app.js"></script>
+</body>
+</html>
