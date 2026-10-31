@@ -273,7 +273,10 @@
     codeFrame.className = 'astrbot-code-animation-frame';
     codeFrame.title = 'AstrBot 启动动画';
     codeFrame.setAttribute('allow', 'autoplay');
-    codeFrame.src = '/astrbot-boot-animation/code-animation/index.html';
+    const codeAnimationPath = config.codeAnimationStyle === 'gpt_codex'
+      ? 'code-animation-gpt'
+      : 'code-animation';
+    codeFrame.src = `/astrbot-boot-animation/${codeAnimationPath}/index.html`;
     codeFrame.addEventListener('error', finishCodeAnimation, { once: true });
     window.addEventListener('message', handleCodeAnimationMessage);
     host.appendChild(codeFrame);
