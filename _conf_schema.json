@@ -31,6 +31,14 @@
     "labels": ["关闭", "先播放代码动画，再播放视频", "只播放代码动画"],
     "subtitles": ["沿用视频启动流程", "代码动画结束后继续单段或双段视频", "代码动画结束后直接进入 AstrBot"]
   },
+  "code_animation_style": {
+    "description": "代码动画样式",
+    "type": "string",
+    "default": "original",
+    "options": ["original", "gpt_codex"],
+    "labels": ["AstrBot 原版代码动画", "OpenAI GPT Codex 风格"],
+    "subtitles": ["保留当前代码启动动画", "全新标志、模型终端动效与 Welcome OpenAI GPT Codex 欢迎语"]
+  },
   "code_animation_theme": {
     "description": "代码动画主题",
     "type": "string",

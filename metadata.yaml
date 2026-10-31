@@ -1,8 +1,8 @@
 name: astrbot_plugin_boot_animation
 display_name: AstrBot 启动动画
-desc: 在 AstrBot 管理面板加载时自动播放全屏代码动画或视频片头，支持代码动画后接单段/双段视频。
+desc: 在 AstrBot 管理面板加载时自动播放全屏代码动画或视频片头，支持原版与 GPT Codex 两种代码动画及单段/双段视频。
 short_desc: AstrBot 管理面板代码与视频启动动画
-version: 1.0.4
+version: 1.0.5
 author: AstrBot port（感谢 lxj5820、NativeDog1、LeeRolling、6shenhonghong9）
 repo: https://github.com/dajj250/astrbot_plugin_boot_animation
 astrbot_version: ">=4.16,<5"

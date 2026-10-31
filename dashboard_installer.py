@@ -124,6 +124,9 @@ def normalize_config(config: Any, available_clips: list[str]) -> dict[str, Any]:
     code_animation_mode = read("code_animation_mode", "off")
     if code_animation_mode not in {"off", "before_video", "only"}:
         code_animation_mode = "off"
+    code_animation_style = read("code_animation_style", "original")
+    if code_animation_style not in {"original", "gpt_codex"}:
+        code_animation_style = "original"
     code_animation_theme = read("code_animation_theme", "light")
     if code_animation_theme not in {"light", "dark"}:
         code_animation_theme = "light"
@@ -166,6 +169,7 @@ def normalize_config(config: Any, available_clips: list[str]) -> dict[str, Any]:
         "fadeMs": fade_ms,
         "entryMode": entry_mode,
         "codeAnimationMode": code_animation_mode,
+        "codeAnimationStyle": code_animation_style,
         "codeAnimationTheme": code_animation_theme,
         "codeAnimationSpeed": code_animation_speed,
         "codeAnimationInteractive": read("code_animation_interactive", False) is True,
@@ -190,6 +194,12 @@ def install_assets(plugin_dir: Path, dist_dir: Path, config: Any) -> dict[str, A
     if code_animation_target.exists():
         shutil.rmtree(code_animation_target)
     shutil.copytree(code_animation_source, code_animation_target)
+
+    gpt_animation_source = plugin_dir / "code_animation_gpt"
+    gpt_animation_target = target / "code-animation-gpt"
+    if gpt_animation_target.exists():
+        shutil.rmtree(gpt_animation_target)
+    shutil.copytree(gpt_animation_source, gpt_animation_target)
 
     source_dir = plugin_dir / "assets" / "videos"
     available = sorted(
