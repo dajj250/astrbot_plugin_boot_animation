@@ -50,17 +50,20 @@
     "options": [
       "original",
       "gpt_codex",
-      "gemini"
+      "gemini",
+      "claude"
     ],
     "labels": [
-      "AstrBot 原版代码动画",
-      "OpenAI GPT Codex 风格",
-      "Gemini 彩虹星光风格"
+      "DeepSeek 风格",
+      "Codex 风格",
+      "Gemini 风格",
+      "Claude 风格"
     ],
     "subtitles": [
-      "保留当前代码启动动画",
-      "ChatGPT / Codex 标志与专属欢迎语",
-      "Gemini 四角星、淡彩虹背景、彩色星流与专属欢迎语"
+      "深色代码启动动画与原始分幕流程",
+      "Codex 编程运行时界面与专属欢迎语",
+      "Gemini 四角星、淡彩虹背景、彩色星流与专属欢迎语",
+      "Claude 风格菊花、淡橙背景、金色花流与专属欢迎语"
     ]
   },
   "code_animation_theme": {
@@ -85,14 +88,18 @@
       "1",
       "1.25",
       "1.5",
-      "2"
+      "2",
+      "5",
+      "10"
     ],
     "labels": [
       "0.75×",
       "1×",
       "1.25×",
       "1.5×",
-      "2×"
+      "2×",
+      "5×",
+      "10×"
     ]
   },
   "code_animation_interactive": {

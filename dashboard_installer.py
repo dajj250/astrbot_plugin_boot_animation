@@ -128,7 +128,7 @@ def normalize_config(config: Any, available_clips: list[str]) -> dict[str, Any]:
     if code_animation_mode not in {"off", "before_video", "only"}:
         code_animation_mode = "off"
     code_animation_style = read("code_animation_style", "original")
-    if code_animation_style not in {"original", "gpt_codex", "gemini"}:
+    if code_animation_style not in {"original", "gpt_codex", "gemini", "claude"}:
         code_animation_style = "original"
     code_animation_theme = read("code_animation_theme", "light")
     if code_animation_theme not in {"light", "dark"}:
@@ -136,7 +136,7 @@ def normalize_config(config: Any, available_clips: list[str]) -> dict[str, Any]:
     code_speed_raw = str(read("code_animation_speed", "1"))
     code_animation_speed = (
         float(code_speed_raw)
-        if code_speed_raw in {"0.75", "1", "1.25", "1.5", "2"}
+        if code_speed_raw in {"0.75", "1", "1.25", "1.5", "2", "5", "10"}
         else 1.0
     )
 
@@ -226,6 +226,11 @@ def install_assets(plugin_dir: Path, dist_dir: Path, config: Any) -> dict[str, A
     gemini_animation_source = plugin_dir / "code_animation_gemini"
     gemini_animation_target = target / "code-animation-gemini"
     shutil.copytree(gemini_animation_source, gemini_animation_target, dirs_exist_ok=True,
+                    copy_function=_copy_if_changed, ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
+
+    claude_animation_source = plugin_dir / "code_animation_claude"
+    claude_animation_target = target / "code-animation-claude"
+    shutil.copytree(claude_animation_source, claude_animation_target, dirs_exist_ok=True,
                     copy_function=_copy_if_changed, ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
 
     source_dir = plugin_dir / "assets" / "videos"

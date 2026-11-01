@@ -19,12 +19,10 @@ recording. Only the brand-name interval was replaced with a locally generated
 IndexTTS 2.5 segment using that recording as the voice reference; surrounding
 speech is retained. This derivative does not change the original media rights.
 
-`code_animation_gpt/openai-white-monoblossom.svg` contains the exact white
-OpenAI Blossom path supplied in OpenAI's official 2025 logo archive. Its
-outer SVG wrapper was simplified without changing the mark geometry. OpenAI owns
-the mark. Its use identifies the GPT-themed animation and does not imply
-OpenAI sponsorship or endorsement. See https://openai.com/brand/ for the
-current brand guidelines and usage terms.
+`code_animation_gpt/codex-reference-mark.png` is adapted from an image supplied
+by the user for the Codex-style startup screen. Its checkerboard background was
+removed. The mark is a visual reference only and does not imply OpenAI
+sponsorship, endorsement, certification, or partnership.
 
 `code_animation_gemini/gemini-star.svg` and `stars.js` use a Gemini-inspired
 four-point silhouette with original pastel facets based on the user's visual
@@ -35,6 +33,17 @@ Gemini and Google names identify the selected theme; no endorsement is implied.
 outside the brand-name interval. Its Gemini segment was generated locally with
 IndexTTS 2.5 using the original recording as reference, then duration/loudness
 matched. The original recording's rights and limitations still apply.
+
+`code_animation_claude/claude-flower.svg` is an original vector drawing based on
+the daisy image supplied by the user. It is a theme illustration, not an
+official Anthropic logo. The Claude and Anthropic names indicate the selected
+visual style; they do not imply affiliation or endorsement.
+
+`code_animation/assets/line-6-claude.mp3` retains the original welcome recording
+outside the brand-name interval. The word “Claude” was generated locally with
+IndexTTS 2.5 using the original recording as its voice reference, then matched
+to the original interval's duration and loudness. The generated word may still
+differ in timbre. The original recording's rights and limitations still apply.
 
 `assets/videos/codex-startup-2k-144fps-crf16.mp4` and
 `assets/videos/whale-fantasy-loop.mp4` were supplied by the user from their local
