@@ -6,8 +6,9 @@
     ? config.codeAnimationMode
     : 'off';
   const hasVideoClips = Array.isArray(config.clips) && config.clips.length > 0;
-  if (config.enabled === false || (codeAnimationMode !== 'only' && !hasVideoClips)) return;
-  if (document.getElementById('astrbot-boot-animation')) return;
+  if (config.enabled === false || (codeAnimationMode === 'off' && !hasVideoClips)) return;
+  if (document.getElementById('astrbot-boot-animation') ||
+      document.getElementById('astrbot-code-animation-frame')) return;
 
   const fadeMs = [1000, 1500, 2000, 3000, 4000].includes(Number(config.fadeMs))
     ? Number(config.fadeMs)
@@ -32,13 +33,8 @@
 
   // A last-resort guard: an unexpected client exception must never leave the
   // AstrBot interface permanently hidden.
-  const visibilityWatchdog = window.setTimeout(() => {
-    html.classList.remove('astrbot-boot-pending');
-    html.classList.remove('astrbot-panel-entering');
-    document.getElementById('astrbot-boot-animation')?.remove();
-    document.getElementById('astrbot-panel-animated-background')?.remove();
-    document.getElementById('astrbot-code-animation-frame')?.remove();
-  }, codeAnimationMode === 'off' ? 15000 : 300000);
+  const visibilityWatchdog = window.setTimeout(enter,
+    codeAnimationMode === 'off' ? 15000 : 300000);
 
   const background = document.createElement('div');
   background.id = 'astrbot-panel-animated-background';
@@ -68,6 +64,10 @@
   let enterRequested = false;
   let readinessTimer = 0;
   let failTimer = 0;
+  let transitionTimer = 0;
+  let audioFadeFrame = 0;
+  let clipGeneration = 0;
+  let lastVideoTime = -1;
   let attachmentObserver = null;
 
   function attach() {
@@ -86,27 +86,49 @@
   }
 
   function loadSequenceClip(index) {
+    if (leaving || index >= sequence.length || !sequence[index]) return;
+    window.clearTimeout(failTimer);
+    window.clearTimeout(transitionTimer);
+    const generation = ++clipGeneration;
     sequenceIndex = index;
     frameSeen = false;
     videoFailed = false;
+    lastVideoTime = -1;
+    video.classList.remove('astrbot-boot-visible');
     video.loop = entryMode === 'click' && sequenceIndex === sequence.length - 1;
     video.src = `/astrbot-boot-animation/videos/${encodeURIComponent(sequence[sequenceIndex])}`;
     video.load();
     setHint(`${sequenceLabel()}正在加载…`);
-    void video.play().catch(() => setHint(`${sequenceLabel()} · 点击画面开始播放`));
+    void video.play().catch(() => {
+      if (!leaving && generation === clipGeneration && !videoFailed) {
+        setHint(`${sequenceLabel()} · 点击画面开始播放`);
+      }
+    });
+    armMediaTimeout();
+  }
+
+  function armMediaTimeout() {
+    if (leaving || videoFailed) return;
+    const generation = clipGeneration;
     window.clearTimeout(failTimer);
     failTimer = window.setTimeout(() => {
-      if (!frameSeen) {
-        videoFailed = true;
-        if (sequenceIndex < sequence.length - 1) {
-          setHint(`${sequenceLabel()}加载超时，正在跳到下一段…`);
-          window.setTimeout(() => loadSequenceClip(sequenceIndex + 1), 500);
-        } else {
-          setHint(`${sequenceLabel()}加载超时，正在进入 AstrBot…`);
-          window.setTimeout(requestAutomaticEnter, 800);
-        }
-      }
+      if (!leaving && generation === clipGeneration) failCurrentClip('加载超时');
     }, 8000);
+  }
+
+  function failCurrentClip(reason) {
+    if (leaving || videoFailed) return;
+    videoFailed = true;
+    window.clearTimeout(failTimer);
+    const generation = clipGeneration;
+    const hasNext = sequenceIndex < sequence.length - 1;
+    setHint(hasNext ? `${sequenceLabel()}${reason}，正在跳到下一段…`
+      : `视频${reason}，正在进入 AstrBot…`);
+    transitionTimer = window.setTimeout(() => {
+      if (leaving || generation !== clipGeneration) return;
+      if (hasNext) loadSequenceClip(sequenceIndex + 1);
+      else requestAutomaticEnter();
+    }, hasNext ? 500 : 800);
   }
 
   function fadeAudio() {
@@ -116,10 +138,10 @@
     const tick = (now) => {
       if (leaving && now - started < fadeMs && !video.paused) {
         video.volume = Math.max(0, initial * (1 - (now - started) / fadeMs));
-        requestAnimationFrame(tick);
+        audioFadeFrame = requestAnimationFrame(tick);
       }
     };
-    requestAnimationFrame(tick);
+    audioFadeFrame = requestAnimationFrame(tick);
   }
 
   function enter() {
@@ -128,9 +150,12 @@
     window.clearTimeout(visibilityWatchdog);
     window.clearTimeout(readinessTimer);
     window.clearTimeout(failTimer);
+    window.clearTimeout(transitionTimer);
     window.clearTimeout(codeFallbackTimer);
     if (attachmentObserver) attachmentObserver.disconnect();
     window.removeEventListener('message', handleCodeAnimationMessage);
+    window.removeEventListener('keydown', handleKeydown, true);
+    window.removeEventListener('load', handlePanelLoad);
     if (codeFrame) {
       codeFrame.remove();
       codeFrame = null;
@@ -143,6 +168,8 @@
     window.setTimeout(() => {
       video.pause();
       video.removeAttribute('src');
+      video.load();
+      cancelAnimationFrame(audioFadeFrame);
       background.remove();
       overlay.remove();
       html.classList.remove('astrbot-panel-entering');
@@ -163,14 +190,17 @@
 
   async function enableSound() {
     if (config.sound === false) return false;
+    const generation = clipGeneration;
     try {
       video.muted = false;
       video.volume = 1;
       await video.play();
+      if (leaving || generation !== clipGeneration) return false;
       audible = true;
       setHint('声音已开启 · 再点一次进入');
       return true;
     } catch (_) {
+      if (leaving || generation !== clipGeneration) return false;
       video.muted = true;
       setHint('浏览器暂未允许声音 · 再点一次进入');
       return false;
@@ -178,6 +208,7 @@
   }
 
   function userEnter(event) {
+    if (leaving) return;
     event.preventDefault();
     event.stopPropagation();
     if (config.clickToEnter === true || config.sound === false || audible) {
@@ -193,14 +224,20 @@
     event.stopPropagation();
     enter();
   });
-  window.addEventListener('keydown', (event) => {
+  function handleKeydown(event) {
+    if (leaving || !videoStarted) return;
     if (['Escape', 'Enter', ' '].includes(event.key)) {
       event.preventDefault();
       enter();
     }
-  }, true);
+  }
+  window.addEventListener('keydown', handleKeydown, true);
 
   video.addEventListener('loadeddata', () => {
+    if (leaving || videoFailed) return;
+    window.clearTimeout(failTimer);
+    // Loading is protected above; a healthy long clip must play to completion.
+    window.clearTimeout(visibilityWatchdog);
     frameSeen = true;
     video.classList.add('astrbot-boot-visible');
     setHint(config.sound === false
@@ -209,6 +246,11 @@
   });
 
   video.addEventListener('timeupdate', () => {
+    if (leaving || videoFailed) return;
+    if (video.currentTime !== lastVideoTime) {
+      lastVideoTime = video.currentTime;
+      window.clearTimeout(failTimer);
+    }
     if (!Number.isFinite(video.duration) || video.duration <= 0) return;
     const isLastClip = sequenceIndex === sequence.length - 1;
     if (isLastClip && entryMode === 'crossfade' && video.duration - video.currentTime <= fadeMs / 1000) {
@@ -217,27 +259,23 @@
   });
 
   video.addEventListener('ended', () => {
+    if (leaving || videoFailed) return;
     if (sequenceIndex < sequence.length - 1) {
       loadSequenceClip(sequenceIndex + 1);
       return;
     }
     if (entryMode !== 'click') requestAutomaticEnter();
   });
-  video.addEventListener('error', () => {
-    videoFailed = true;
-    if (sequenceIndex < sequence.length - 1) {
-      setHint(`${sequenceLabel()}无法播放，正在跳到下一段…`);
-      window.setTimeout(() => loadSequenceClip(sequenceIndex + 1), 500);
-    } else {
-      setHint('视频无法播放，正在进入 AstrBot…');
-      window.setTimeout(requestAutomaticEnter, 800);
-    }
-  });
+  video.addEventListener('error', () => failCurrentClip('无法播放'));
+  video.addEventListener('waiting', armMediaTimeout);
+  video.addEventListener('stalled', armMediaTimeout);
+  video.addEventListener('playing', () => window.clearTimeout(failTimer));
 
-  window.addEventListener('load', () => {
+  function handlePanelLoad() {
     panelReady = true;
     if (enterRequested) enter();
-  }, { once: true });
+  }
+  window.addEventListener('load', handlePanelLoad, { once: true });
 
   function startVideoIntro() {
     if (videoStarted || leaving) return;
@@ -250,6 +288,7 @@
   }
 
   function finishCodeAnimation() {
+    if (leaving || !codeFrame) return;
     window.clearTimeout(codeFallbackTimer);
     window.removeEventListener('message', handleCodeAnimationMessage);
     if (codeFrame) {
@@ -261,6 +300,7 @@
   }
 
   function handleCodeAnimationMessage(event) {
+    if (leaving || !codeFrame || event.source !== codeFrame.contentWindow) return;
     if (event.origin !== window.location.origin) return;
     if (!event.data || event.data.type !== 'astrbot-code-animation:done') return;
     finishCodeAnimation();
@@ -273,9 +313,12 @@
     codeFrame.className = 'astrbot-code-animation-frame';
     codeFrame.title = 'AstrBot 启动动画';
     codeFrame.setAttribute('allow', 'autoplay');
-    const codeAnimationPath = config.codeAnimationStyle === 'gpt_codex'
-      ? 'code-animation-gpt'
-      : 'code-animation';
+    const codeAnimationPaths = {
+      original: 'code-animation',
+      gpt_codex: 'code-animation-gpt',
+      gemini: 'code-animation-gemini',
+    };
+    const codeAnimationPath = codeAnimationPaths[config.codeAnimationStyle] || 'code-animation';
     codeFrame.src = `/astrbot-boot-animation/${codeAnimationPath}/index.html`;
     codeFrame.addEventListener('error', finishCodeAnimation, { once: true });
     window.addEventListener('message', handleCodeAnimationMessage);
