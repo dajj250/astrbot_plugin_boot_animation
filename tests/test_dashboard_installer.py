@@ -43,6 +43,29 @@ class DashboardInstallerTests(unittest.TestCase):
             self.assertEqual(target.read_bytes(), b'previous complete media')
             self.assertFalse(list(root.glob('*.tmp')))
 
+    def test_retired_video_upgrade_falls_back_and_cleans_public_cache(self):
+        import shutil
+        from dashboard_installer import RETIRED_CLIPS
+        plugin_dir = Path(__file__).resolve().parent.parent
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            plugin = root / 'plugin'
+            shutil.copytree(plugin_dir, plugin, ignore=shutil.ignore_patterns('__pycache__'))
+            dist = root / 'dist'
+            cache = dist / 'astrbot-boot-animation/videos'
+            cache.mkdir(parents=True)
+            for name in RETIRED_CLIPS:
+                (plugin / 'assets/videos' / name).write_bytes(b'old plugin file')
+                (cache / name).write_bytes(b'old public file')
+            config = install_assets(plugin, dist, {
+                'clips': list(RETIRED_CLIPS), 'play_sequence': 'double',
+                'opening_clip': 'deepseek-awakening-intro.mp4',
+                'closing_clip': 'deepseek-startup-intro.mp4',
+            })
+            self.assertEqual(config['sequence'], ['codex-startup-2k-144fps-crf16.mp4', 'whale-fantasy-loop.mp4'])
+            self.assertFalse(set(config['clips']) & RETIRED_CLIPS)
+            self.assertFalse(set(path.name for path in cache.iterdir()) & RETIRED_CLIPS)
+
     def test_new_video_pair_can_be_selected(self):
         names = ['codex-startup-2k-144fps-crf16.mp4', 'whale-fantasy-loop.mp4']
         result = normalize_config({'play_sequence':'double', 'opening_clip':names[0],
@@ -80,27 +103,27 @@ class DashboardInstallerTests(unittest.TestCase):
 
     def test_single_and_double_clip_sequences(self):
         available = [
-            "deepseek-awakening-intro.mp4",
-            "deepseek-brand-intro.mp4",
-            "deepseek-startup-intro.mp4",
+            "codex-startup-2k-144fps-crf16.mp4",
+            "codex-startup-2k-144fps-crf16.mp4",
+            "whale-fantasy-loop.mp4",
         ]
         single = normalize_config(
-            {"play_sequence": "single", "single_clip": "deepseek-brand-intro.mp4"},
+            {"play_sequence": "single", "single_clip": "codex-startup-2k-144fps-crf16.mp4"},
             available,
         )
-        self.assertEqual(single["sequence"], ["deepseek-brand-intro.mp4"])
+        self.assertEqual(single["sequence"], ["codex-startup-2k-144fps-crf16.mp4"])
 
         double = normalize_config(
             {
                 "play_sequence": "double",
-                "opening_clip": "deepseek-awakening-intro.mp4",
-                "closing_clip": "deepseek-startup-intro.mp4",
+                "opening_clip": "codex-startup-2k-144fps-crf16.mp4",
+                "closing_clip": "whale-fantasy-loop.mp4",
             },
             available,
         )
         self.assertEqual(
             double["sequence"],
-            ["deepseek-awakening-intro.mp4", "deepseek-startup-intro.mp4"],
+            ["codex-startup-2k-144fps-crf16.mp4", "whale-fantasy-loop.mp4"],
         )
 
     def test_assets_are_ready_for_dashboard_static_serving(self):
@@ -110,14 +133,14 @@ class DashboardInstallerTests(unittest.TestCase):
             config = install_assets(
                 plugin_dir,
                 dist,
-                {"clips": ["deepseek-brand-intro.mp4"], "entry_mode": "after"},
+                {"clips": ["codex-startup-2k-144fps-crf16.mp4"], "entry_mode": "after"},
             )
             target = dist / "astrbot-boot-animation"
             self.assertTrue((target / "boot.js").is_file())
             self.assertTrue((target / "boot.css").is_file())
             self.assertIn('"entryMode":"after"', (target / "config.js").read_text("utf-8"))
-            self.assertEqual(config["clips"], ["deepseek-brand-intro.mp4"])
-            self.assertTrue((target / "videos" / "deepseek-brand-intro.mp4").is_file())
+            self.assertEqual(config["clips"], ["codex-startup-2k-144fps-crf16.mp4"])
+            self.assertTrue((target / "videos" / "codex-startup-2k-144fps-crf16.mp4").is_file())
             self.assertTrue((target / "code-animation" / "index.html").is_file())
             self.assertTrue((target / "code-animation" / "splash.js").is_file())
             self.assertTrue((target / "code-animation" / "splash.css").is_file())
@@ -181,7 +204,7 @@ class DashboardInstallerTests(unittest.TestCase):
                 "code_animation_interactive": True,
                 "code_animation_sound": True,
             },
-            ["deepseek-brand-intro.mp4"],
+            ["codex-startup-2k-144fps-crf16.mp4"],
         )
         self.assertEqual(result["codeAnimationMode"], "before_video")
         self.assertEqual(result["codeAnimationStyle"], "gpt_codex")
