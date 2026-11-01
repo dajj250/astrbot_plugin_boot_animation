@@ -1,0 +1,10 @@
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#000}
+#dsh-startup-root.dsu-dark{--dsu-bg:#030605;--dsu-bg-2:#080c0a;--dsu-hair:rgba(150,200,170,.16)}
+.dsu-codex-mark{display:block;width:100%;height:100%;object-fit:contain}
+.dsu-black-inner>.dsu-codex-mark{width:132px;height:132px;margin:0 auto 26px}
+.dsu-logo>.dsu-codex-mark,.dsu-w3>.dsu-codex-mark{width:72px;height:72px;margin:0 auto 16px}
+#dsh-startup-root .dsu-wash,#dsh-startup-root .dsu-flash{background:#07120c}
+#dsh-startup-root .dsu-sweep,#dsh-startup-root .dsu-progress{display:none}
+#dsh-startup-root .dsu-skip{top:28px;right:28px}
+.codex-rain{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2;opacity:.24}
+@media(prefers-reduced-motion:reduce){.codex-rain{display:none}}
