@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Gemini four-point sparkle">
+  <defs>
+    <linearGradient id="gemini" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#79c7ee"/><stop offset=".40" stop-color="#777fe3"/>
+      <stop offset=".72" stop-color="#b889df"/><stop offset="1" stop-color="#efb5cb"/>
+    </linearGradient>
+    <linearGradient id="facet" x2="0" y2="1"><stop stop-color="#fff"/><stop offset="1" stop-color="#c9c6fa"/></linearGradient>
+  </defs>
+  <path d="M64 4C70 43 85 58 124 64C85 70 70 85 64 124C58 85 43 70 4 64C43 58 58 43 64 4Z" fill="url(#gemini)"/>
+  <path d="M64 8L66 61L120 64L66 67L64 120L61 67L8 64L61 61Z" fill="url(#facet)" opacity=".84"/>
+  <path d="M64 8L61 61L8 64L52 51Z" fill="#fff" opacity=".6"/>
+  <path d="M66 67L64 120L76 78L120 64Z" fill="#6367b4" opacity=".35"/>
+</svg>

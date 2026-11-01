@@ -1,0 +1,24 @@
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#f5f4fa}
+#dsh-startup-root{
+  --dsu-bg:#f4f4fa;--dsu-bg-2:#fbfafb;--dsu-ink:#25283c;--dsu-ink-soft:#4b5067;
+  --dsu-muted:#6d7189;--dsu-hair:rgba(75,80,125,.18);--dsu-hair-soft:rgba(75,80,125,.075);
+  --gemini-sky:radial-gradient(ellipse at 12% 18%,#bcdafa66,transparent 56%),radial-gradient(ellipse at 84% 12%,#e5caf566,transparent 55%),radial-gradient(ellipse at 88% 84%,#f9d0cf66,transparent 54%),radial-gradient(ellipse at 12% 88%,#cbe7d966,transparent 55%),linear-gradient(120deg,#fafbfe,#f7f4fa);
+  background:var(--gemini-sky);
+}
+#dsh-startup-root.dsu-dark{
+  --dsu-bg:#15172b;--dsu-bg-2:#1d2037;--dsu-ink:#edf0fc;--dsu-ink-soft:#cbd0e5;
+  --dsu-muted:#a5adc9;--dsu-hair:rgba(190,199,240,.17);--dsu-hair-soft:rgba(190,199,240,.075);
+  --gemini-sky:radial-gradient(ellipse at 12% 18%,#4f8bbb25,transparent 56%),radial-gradient(ellipse at 84% 12%,#9e63c02b,transparent 55%),radial-gradient(ellipse at 88% 84%,#b8788c24,transparent 54%),radial-gradient(ellipse at 12% 88%,#50988c20,transparent 55%),linear-gradient(120deg,#14172b,#1c1930);
+}
+#dsh-startup-root .dsu-plate,#dsh-startup-root .dsu-black{background:var(--gemini-sky)}
+#dsh-startup-root .dsu-black-zh,#dsh-startup-root .dsu-black-en{color:var(--dsu-ink)}
+#dsh-startup-root .dsu-black-sub{color:var(--dsu-muted)}
+.dsu-codex-mark{display:block;object-fit:contain}
+.dsu-black-inner>.dsu-codex-mark{width:132px;height:132px;margin:0 auto 26px}
+.dsu-logo>.dsu-codex-mark,.dsu-w3>.dsu-codex-mark{width:72px;height:72px;margin:0 auto 16px}
+#dsh-startup-root .dsu-wash,#dsh-startup-root .dsu-flash{background:var(--dsu-bg)}
+#dsh-startup-root .dsu-sweep,#dsh-startup-root .dsu-progress{display:none}
+#dsh-startup-root .dsu-skip{top:28px;right:28px}
+.gemini-stars{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:14}
+@media(max-width:600px){#dsh-startup-root .dsu-brand{left:24px;top:28px}#dsh-startup-root .dsu-brand-1{font-size:26px}}
+@media(prefers-reduced-motion:reduce){.gemini-stars{display:none}}
