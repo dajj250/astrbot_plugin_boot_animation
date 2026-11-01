@@ -496,7 +496,7 @@
     if (C.logoUrl) {
       var mark = document.createElement('img')
       mark.src = C.logoUrl
-      mark.alt = 'OpenAI / ChatGPT'
+      mark.alt = C.logoAlt || 'OpenAI / ChatGPT'
       mark.className = 'dsu-codex-mark' + (cls ? ' ' + cls : '')
       return mark
     }
@@ -687,12 +687,12 @@
 
   ;(function logoStage() {
     ui.logo.appendChild(svgWhale())
-    ui.logo.appendChild(el('div', 'dsu-logolabel', C.logoUrl ? 'C H A T G P T' : 'D E E P S E E K'))
+    ui.logo.appendChild(el('div', 'dsu-logolabel', C.logoLabel || (C.logoUrl ? 'C H A T G P T' : 'D E E P S E E K')))
   })()
 
   ;(function welcomeLogo() {
     ui.w3.appendChild(svgWhale())
-    ui.w3.appendChild(el('span', 'dsu-w3label', C.logoUrl ? 'O P E N A I  ·  C O D E X' : 'D E E P S E E K  ·  H A R N E S S'))
+    ui.w3.appendChild(el('span', 'dsu-w3label', C.welcomeLogoLabel || (C.logoUrl ? 'O P E N A I  ·  C O D E X' : 'D E E P S E E K  ·  H A R N E S S')))
   })()
 
   ;(function watermark() {
@@ -714,7 +714,7 @@
   /* 左侧六格阶段柱 + 品牌块下方的小字数据行 + 实时时钟 */
   ;(function slatsAndMeta() {
     for (var i = 0; i < STEPS.length + 1; i++) ui.slats.appendChild(el('i', 'dsu-slat'))
-    ui.meta1.textContent = 'REV 0.1.0 · WEB PROFILE'
+    ui.meta1.textContent = 'REV ' + (C.revision || '0.1.0') + ' · WEB PROFILE'
     paintClock()
     clockTimer = setInterval(paintClock, 1000)
   })()
