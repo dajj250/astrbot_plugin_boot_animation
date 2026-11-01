@@ -3,7 +3,7 @@
   let config = {};
   try { config = parent.__ASTRBOT_BOOT_ANIMATION__ || {}; } catch (_) {}
 
-  const speed = [0.75, 1, 1.25, 1.5, 2].includes(Number(config.codeAnimationSpeed)) ? Number(config.codeAnimationSpeed) : 1;
+  const speed = [0.75, 1, 1.25, 1.5, 2, 5, 10].includes(Number(config.codeAnimationSpeed)) ? Number(config.codeAnimationSpeed) : 1;
   const soundEnabled = config.codeAnimationSound === true;
   const stage = document.getElementById('stage');
   const loadTerminal = document.getElementById('loadTerminal');
@@ -190,7 +190,7 @@
     timer(() => {
       welcome.classList.add('show');
       confirmationSound();
-      speak('Welcome OpenAI GPT Codex', 'welcome');
+      speak('Welcome to Codex Style', 'welcome');
     }, 14500);
     timer(finish, 18800);
   }
@@ -225,7 +225,7 @@
       stage.classList.add('phase-two');
       startLabHum();
       scanSound();
-      speak('OpenAI GPT Codex systems are loading. Please wait.', 'loading');
+      speak('GPT Codex Style systems are loading. Please wait.', 'loading');
     }, 620);
     addDiagnostic('LABORATORY POWER BUS STABLE', 1000, true);
     addDiagnostic('AUTHENTICATING GPT MODEL CORE', 1800);

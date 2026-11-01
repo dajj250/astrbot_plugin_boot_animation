@@ -5,15 +5,17 @@
   var canvas = document.createElement('canvas');
   canvas.className = 'codex-rain'; canvas.setAttribute('aria-hidden','true'); root.appendChild(canvas);
   var ctx = canvas.getContext('2d'), trails = [], raf, last = 0, stopped = false;
+  var speed = Math.min(10, Math.max(.35, Number((window.__DSH_STARTUP__ || {}).speed) || 1));
+  var elapsed = 0;
   if (!ctx) { canvas.remove(); return; }
   function resize() { canvas.width=innerWidth; canvas.height=innerHeight; }
   function draw(now) {
     if(stopped) return;
     raf=requestAnimationFrame(draw);
     if(document.hidden || now-last<50) return;
-    var dt=Math.min((now-last)/1000,.1); last=now;
+    var dt=Math.min((now-last)/1000,.1)*speed; last=now; elapsed+=dt;
     ctx.clearRect(0,0,canvas.width,canvas.height);
-    if(now%11000<3300 && trails.length<12 && Math.random()<.22)
+    if(elapsed%11<3.3 && trails.length<12 && Math.random()<Math.min(1,dt*4.4))
       trails.push({x:Math.floor(Math.random()*canvas.width/22)*22,y:-160,speed:85+Math.random()*90});
     trails=trails.filter(function(t){
       t.y+=t.speed*dt;

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-labelledby="title desc">
+  <title id="title">Codex Style knot</title>
+  <desc id="desc">An independent six-loop knot mark for the Codex Style animation.</desc>
+  <g fill="none" stroke="#f5f7f6" stroke-width="10" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M128 28c-25 0-43 18-43 40 0 18 12 31 29 39l28 13c17 8 29 21 29 39 0 22-18 40-43 40"/>
+    <path d="M228 128c0-25-18-43-40-43-18 0-31 12-39 29l-13 28c-8 17-21 29-39 29-22 0-40-18-40-43"/>
+    <path d="M128 228c25 0 43-18 43-40 0-18-12-31-29-39l-28-13c-17-8-29-21-29-39 0-22 18-40 43-40"/>
+    <path d="M28 128c0 25 18 43 40 43 18 0 31-12 39-29l13-28c8-17 21-29 39-29 22 0 40 18 40 43"/>
+    <path d="M69 69l118 118M187 69L69 187" opacity=".45"/>
+  </g>
+</svg>

@@ -7,7 +7,7 @@ header{height:74px;display:flex;align-items:center;justify-content:space-between
 @media(max-width:760px){header{height:58px;padding:0 18px}.loading-layout{grid-template-columns:1fr;width:90vw;gap:20px;align-content:center}.loading-copy h1{font-size:58px}.diagnostic{min-height:310px}.diagnostic-body{max-width:75%;padding:15px}.scanner-ring{width:140px}.confirm-wrap{padding:15px 18px;display:block;text-align:center}.confirm-wrap p{margin-bottom:10px}.code-layout{grid-template-columns:1fr;padding:20px 0}.code-aside{display:none}.code-screen{font-size:9px;padding:14px}.welcome span{text-align:center;padding:0 20px}.hero-mark{width:190px}}
 @media(prefers-reduced-motion:reduce){.grain{display:none}}
 
-/* The supplied OpenAI Blossom is displayed intact in both phases. */
+/* Independent Codex Style knot mark; this is not an OpenAI logo. */
 .gpt-mark img{display:block;width:100%;height:auto;user-select:none;-webkit-user-drag:none}
 .hero-mark{width:min(42vw,420px);filter:none;position:relative;z-index:1}
 .hero-mark::before{content:"";position:absolute;inset:17%;z-index:-1;border:1px solid rgba(255,255,255,.09);border-radius:50%;box-shadow:0 0 90px rgba(255,255,255,.045);animation:orbitBreath calc(3.4s / var(--speed)) ease-in-out infinite alternate}
