@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import os
 import shutil
+import tempfile
 from pathlib import Path
 from typing import Any
 
@@ -125,7 +126,7 @@ def normalize_config(config: Any, available_clips: list[str]) -> dict[str, Any]:
     if code_animation_mode not in {"off", "before_video", "only"}:
         code_animation_mode = "off"
     code_animation_style = read("code_animation_style", "original")
-    if code_animation_style not in {"original", "gpt_codex"}:
+    if code_animation_style not in {"original", "gpt_codex", "gemini"}:
         code_animation_style = "original"
     code_animation_theme = read("code_animation_theme", "light")
     if code_animation_theme not in {"light", "dark"}:
@@ -180,26 +181,50 @@ def normalize_config(config: Any, available_clips: list[str]) -> dict[str, Any]:
     }
 
 
+def _copy_if_changed(source: str | Path, destination: str | Path) -> str:
+    """Avoid recopying large media; readers see either the old or complete file."""
+    source, destination = Path(source), Path(destination)
+    source_stat = source.stat()
+    if destination.is_file():
+        target_stat = destination.stat()
+        if (source_stat.st_size, source_stat.st_mtime_ns) == (
+            target_stat.st_size, target_stat.st_mtime_ns
+        ):
+            return str(destination)
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    with tempfile.NamedTemporaryFile(dir=destination.parent, suffix=".tmp", delete=False) as temp:
+        temporary = Path(temp.name)
+    try:
+        shutil.copy2(source, temporary)
+        temporary.replace(destination)
+    finally:
+        temporary.unlink(missing_ok=True)
+    return str(destination)
+
+
 def install_assets(plugin_dir: Path, dist_dir: Path, config: Any) -> dict[str, Any]:
     """Copy the tiny loader and selected media to the Dashboard static root."""
     target = dist_dir / "astrbot-boot-animation"
     video_target = target / "videos"
     video_target.mkdir(parents=True, exist_ok=True)
 
-    shutil.copy2(plugin_dir / "web" / "boot.js", target / "boot.js")
-    shutil.copy2(plugin_dir / "web" / "boot.css", target / "boot.css")
+    _copy_if_changed(plugin_dir / "web" / "boot.js", target / "boot.js")
+    _copy_if_changed(plugin_dir / "web" / "boot.css", target / "boot.css")
 
     code_animation_source = plugin_dir / "code_animation"
     code_animation_target = target / "code-animation"
-    if code_animation_target.exists():
-        shutil.rmtree(code_animation_target)
-    shutil.copytree(code_animation_source, code_animation_target)
+    shutil.copytree(code_animation_source, code_animation_target, dirs_exist_ok=True,
+                    copy_function=_copy_if_changed, ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
 
     gpt_animation_source = plugin_dir / "code_animation_gpt"
     gpt_animation_target = target / "code-animation-gpt"
-    if gpt_animation_target.exists():
-        shutil.rmtree(gpt_animation_target)
-    shutil.copytree(gpt_animation_source, gpt_animation_target)
+    shutil.copytree(gpt_animation_source, gpt_animation_target, dirs_exist_ok=True,
+                    copy_function=_copy_if_changed, ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
+
+    gemini_animation_source = plugin_dir / "code_animation_gemini"
+    gemini_animation_target = target / "code-animation-gemini"
+    shutil.copytree(gemini_animation_source, gemini_animation_target, dirs_exist_ok=True,
+                    copy_function=_copy_if_changed, ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
 
     source_dir = plugin_dir / "assets" / "videos"
     available = sorted(
@@ -214,7 +239,7 @@ def install_assets(plugin_dir: Path, dist_dir: Path, config: Any) -> dict[str, A
         if old.is_file() and old.name not in available:
             old.unlink()
     for name in available:
-        shutil.copy2(source_dir / name, video_target / name)
+        _copy_if_changed(source_dir / name, video_target / name)
 
     payload = "window.__ASTRBOT_BOOT_ANIMATION__=" + json.dumps(
         browser_config, ensure_ascii=False, separators=(",", ":")

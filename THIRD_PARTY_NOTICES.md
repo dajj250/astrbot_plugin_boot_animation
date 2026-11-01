@@ -25,3 +25,18 @@ outer SVG wrapper was simplified without changing the mark geometry. OpenAI owns
 the mark. Its use identifies the GPT-themed animation and does not imply
 OpenAI sponsorship or endorsement. See https://openai.com/brand/ for the
 current brand guidelines and usage terms.
+
+`code_animation_gemini/gemini-star.svg` and `stars.js` use a Gemini-inspired
+four-point silhouette with original pastel facets based on the user's visual
+reference. They are stylized artwork, not an official downloadable logo asset.
+Gemini and Google names identify the selected theme; no endorsement is implied.
+
+`code_animation/assets/line-6-gemini.mp3` retains the original welcome recording
+outside the brand-name interval. Its Gemini segment was generated locally with
+IndexTTS 2.5 using the original recording as reference, then duration/loudness
+matched. The original recording's rights and limitations still apply.
+
+`assets/videos/codex-startup-2k-144fps-crf16.mp4` and
+`assets/videos/whale-fantasy-loop.mp4` were supplied by the user from their local
+AstrBot instances and included without transcoding. Inclusion does not grant
+additional rights to third-party imagery or trademarks appearing in the videos.

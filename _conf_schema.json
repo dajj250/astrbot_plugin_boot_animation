@@ -35,9 +35,9 @@
     "description": "代码动画样式",
     "type": "string",
     "default": "original",
-    "options": ["original", "gpt_codex"],
-    "labels": ["AstrBot 原版代码动画", "OpenAI GPT Codex 风格"],
-    "subtitles": ["保留当前代码启动动画", "全新标志、模型终端动效与 Welcome OpenAI GPT Codex 欢迎语"]
+    "options": ["original", "gpt_codex", "gemini"],
+    "labels": ["AstrBot 原版代码动画", "OpenAI GPT Codex 风格", "Gemini 彩虹星光风格"],
+    "subtitles": ["保留当前代码启动动画", "ChatGPT / Codex 标志与专属欢迎语", "Gemini 四角星、淡彩虹背景、彩色星流与专属欢迎语"]
   },
   "code_animation_theme": {
     "description": "代码动画主题",
@@ -119,15 +119,19 @@
       "deepseek-awakening-intro.mp4",
       "deepseek-brand-intro.mp4",
       "deepseek-cyberpunk-intro.mp4",
-      "deepseek-startup-intro.mp4"
+      "deepseek-startup-intro.mp4",
+      "codex-startup-2k-144fps-crf16.mp4",
+      "whale-fantasy-loop.mp4"
     ],
     "options": [
       "deepseek-awakening-intro.mp4",
       "deepseek-brand-intro.mp4",
       "deepseek-cyberpunk-intro.mp4",
-      "deepseek-startup-intro.mp4"
+      "deepseek-startup-intro.mp4",
+      "codex-startup-2k-144fps-crf16.mp4",
+      "whale-fantasy-loop.mp4"
     ],
-    "labels": ["觉醒片头", "品牌片头", "赛博朋克片头", "启动片头"],
+    "labels": ["觉醒片头", "品牌片头", "赛博朋克片头", "启动片头", "Codex 2K 144fps 启动片头", "梦幻鲸鱼循环影片"],
     "hint": "勾选参与随机播放的影片。也可以把 mp4/webm/m4v/mov 文件放入插件的 assets/videos 目录，然后重载插件。"
   }
 }
