@@ -197,7 +197,7 @@
         out[k2] = raw[k2]
       }
     }
-    out.speed = Math.min(3, Math.max(0.35, Number(out.speed) || 1))
+    out.speed = Math.min(10, Math.max(0.35, Number(out.speed) || 1))
     out.identity = String(out.identity || DEFAULTS.identity).slice(0, 48)
     /* 代号取身份名称里的字母数字；纯中文名字取不到时退回 OPERATOR */
     out.identityId = String(out.identityId || out.identity).toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 12)
@@ -524,7 +524,7 @@
         continue
       }
       var s = el('span', 'dsu-ch', ch)
-      s.style.transitionDelay = Math.round(n * stagger) + 'ms'
+      s.style.transitionDelay = Math.round(n * stagger / C.speed) + 'ms'
       frag.appendChild(s)
       n++
     }
@@ -1447,7 +1447,7 @@
            台词短也不会干等。用户点得快时同样等这一句念完，不掐断。 */
         function holdFor(spoken) {
           var target = Math.max(ms(step.hold), (spoken || 0) + ms(240))
-          return wait(Math.max(0, target - (spoken || 0)))
+          return wait(Math.max(0, target - (spoken || 0)) * C.speed)
         }
 
         if (step.action === 'grant' || step.action === 'confirm') {
@@ -1457,7 +1457,7 @@
             audio.confirm()
             ui.caret.classList.remove('dsu-on')
             return spoke
-          }).then(function () { return wait(ms(320)) })
+          }).then(function () { return wait(320) })
         }
         if (step.hex) {
           return spoke.then(holdFor).then(function () { stopHex() })
