@@ -12,7 +12,7 @@
   let width=0, height=0, last=0, elapsed=0, raf=0, stopped=false, columns=[];
   const palette=['#718ee2','#a888d0','#d794bb','#6faccc','#86b9a5'];
   const config=window.__DSH_STARTUP__ || {};
-  const speed=Math.min(3,Math.max(.35,Number(config.speed)||1));
+  const speed=Math.min(10,Math.max(.35,Number(config.speed)||1));
   function resize(){
     width=innerWidth; height=innerHeight;
     const ratio=Math.min(devicePixelRatio||1,2);
