@@ -1,9 +1,11 @@
 import tempfile
 import unittest
+from unittest.mock import patch
 from pathlib import Path
 
 from dashboard_installer import (
     END_MARKER,
+    _copy_if_changed,
     START_MARKER,
     install_assets,
     normalize_config,
@@ -13,6 +15,40 @@ from dashboard_installer import (
 
 
 class DashboardInstallerTests(unittest.TestCase):
+    def test_large_media_copy_skips_unchanged_and_updates_changed_files(self):
+        import shutil
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            source, target = root / 'source.mp4', root / 'public/video.mp4'
+            source.write_bytes(b'first version')
+            _copy_if_changed(source, target)
+            with patch('dashboard_installer.shutil.copy2', wraps=shutil.copy2) as copy:
+                _copy_if_changed(source, target)
+                copy.assert_not_called()
+                source.write_bytes(b'updated media content')
+                _copy_if_changed(source, target)
+                copy.assert_called_once()
+            self.assertEqual(target.read_bytes(), source.read_bytes())
+            self.assertFalse(list(target.parent.glob('*.tmp')))
+
+    def test_failed_copy_preserves_existing_media_and_removes_temporary_file(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            source, target = root / 'source.mp4', root / 'video.mp4'
+            source.write_bytes(b'new media')
+            target.write_bytes(b'previous complete media')
+            with patch('dashboard_installer.shutil.copy2', side_effect=OSError('disk full')):
+                with self.assertRaises(OSError):
+                    _copy_if_changed(source, target)
+            self.assertEqual(target.read_bytes(), b'previous complete media')
+            self.assertFalse(list(root.glob('*.tmp')))
+
+    def test_new_video_pair_can_be_selected(self):
+        names = ['codex-startup-2k-144fps-crf16.mp4', 'whale-fantasy-loop.mp4']
+        result = normalize_config({'play_sequence':'double', 'opening_clip':names[0],
+                                   'closing_clip':names[1]}, names)
+        self.assertEqual(result['sequence'], names)
+
     def test_patch_is_idempotent_and_restore_preserves_dashboard(self):
         with tempfile.TemporaryDirectory() as folder:
             index = Path(folder) / "index.html"
@@ -130,7 +166,7 @@ class DashboardInstallerTests(unittest.TestCase):
             ["off", "before_video", "only"],
         )
         self.assertIn("code_animation_theme", schema)
-        self.assertEqual(schema["code_animation_style"]["options"], ["original", "gpt_codex"])
+        self.assertEqual(schema["code_animation_style"]["options"], ["original", "gpt_codex", "gemini"])
         self.assertIn("code_animation_speed", schema)
         self.assertIn("code_animation_interactive", schema)
         self.assertIn("code_animation_sound", schema)
@@ -153,6 +189,38 @@ class DashboardInstallerTests(unittest.TestCase):
         self.assertEqual(result["codeAnimationSpeed"], 1.5)
         self.assertTrue(result["codeAnimationInteractive"])
         self.assertTrue(result["codeAnimationSound"])
+
+    def test_gemini_installs_complete_page_and_audio(self):
+        import re
+        from urllib.parse import urljoin
+        plugin_dir = Path(__file__).resolve().parent.parent
+        with tempfile.TemporaryDirectory() as folder:
+            dist = Path(folder)
+            config = install_assets(plugin_dir, dist, {
+                'code_animation_style': 'gemini', 'code_animation_mode': 'only',
+                'code_animation_interactive': True, 'code_animation_sound': True,
+            })
+            self.assertEqual(config['codeAnimationStyle'], 'gemini')
+            self.assertTrue(config['codeAnimationInteractive'])
+            self.assertTrue(config['codeAnimationSound'])
+            target = dist / 'astrbot-boot-animation'
+            markup = (target / 'code-animation-gemini/index.html').read_text('utf-8')
+            self.assertIn("identityId:'0003'", markup)
+            self.assertNotIn('CODEX', markup)
+            self.assertNotIn('DeepSeek', markup)
+            # Resolve links exactly as the iframe will after installation.
+            page = 'http://preview/code-animation-gemini/index.html'
+            base = urljoin(page, re.search(r'<base href="([^"]+)"', markup)[1])
+            for link in re.findall(r'(?:src|href)="([^"]+)"', markup):
+                if link == '../code-animation/':
+                    continue
+                path = urljoin(base, link).split('http://preview/', 1)[1]
+                self.assertTrue((target / path).is_file(), path)
+            self.assertGreater((target/'code-animation/assets/line-6-gemini.mp3').stat().st_size, 1000)
+            self.assertTrue((target/'code-animation-gemini/gemini-star.svg').is_file())
+            for number in range(1, 6):
+                self.assertEqual((target/f'code-animation/assets/line-{number}.mp3').read_bytes(),
+                                 (plugin_dir/f'code_animation/assets/line-{number}.mp3').read_bytes())
 
     def test_gpt_animation_reuses_original_runtime_and_audio(self):
         plugin_dir = Path(__file__).resolve().parent.parent
