@@ -18,6 +18,7 @@ INJECTED_HTML = (
     '<script src="/astrbot-boot-animation/boot.js"></script>\n'
     f"{END_MARKER}"
 )
+RETIRED_CLIPS = {'deepseek-startup-intro.mp4', 'deepseek-awakening-intro.mp4', 'deepseek-cyberpunk-intro.mp4', 'deepseek-brand-intro.mp4'}
 VIDEO_SUFFIXES = {".mp4", ".webm", ".m4v", ".mov"}
 
 
@@ -108,6 +109,7 @@ def normalize_config(config: Any, available_clips: list[str]) -> dict[str, Any]:
         except (AttributeError, TypeError):
             return default
 
+    available_clips = [name for name in available_clips if name not in RETIRED_CLIPS]
     selected = read("clips", available_clips)
     if not isinstance(selected, list):
         selected = available_clips
@@ -152,9 +154,9 @@ def normalize_config(config: Any, available_clips: list[str]) -> dict[str, Any]:
             return clips[0]
         return available_clips[0] if available_clips else ""
 
-    single_clip = selected_clip("single_clip", "deepseek-brand-intro.mp4")
-    opening_clip = selected_clip("opening_clip", "deepseek-awakening-intro.mp4")
-    closing_clip = selected_clip("closing_clip", "deepseek-startup-intro.mp4")
+    single_clip = selected_clip("single_clip", "codex-startup-2k-144fps-crf16.mp4")
+    opening_clip = selected_clip("opening_clip", "codex-startup-2k-144fps-crf16.mp4")
+    closing_clip = selected_clip("closing_clip", "whale-fantasy-loop.mp4")
     sequence = (
         [opening_clip, closing_clip]
         if play_sequence == "double"
@@ -231,6 +233,7 @@ def install_assets(plugin_dir: Path, dist_dir: Path, config: Any) -> dict[str, A
         path.name
         for path in source_dir.iterdir()
         if path.is_file() and path.suffix.lower() in VIDEO_SUFFIXES
+        and path.name not in RETIRED_CLIPS
     )
     browser_config = normalize_config(config, available)
 
