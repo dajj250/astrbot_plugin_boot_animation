@@ -14,6 +14,11 @@ The upstream README states that the bundled voice and sound-effect assets includ
 third-party material not covered by the MIT code license. Reuse and commercial
 distribution of those media files may require permission from their rights holders.
 
+`code_animation/assets/line-6-chatgpt.mp3` is derived from the bundled welcome
+recording. Only the brand-name interval was replaced with a locally generated
+IndexTTS 2.5 segment using that recording as the voice reference; surrounding
+speech is retained. This derivative does not change the original media rights.
+
 `code_animation_gpt/openai-white-monoblossom.svg` contains the exact white
 OpenAI Blossom path supplied in OpenAI's official 2025 logo archive. Its
 outer SVG wrapper was simplified without changing the mark geometry. OpenAI owns
