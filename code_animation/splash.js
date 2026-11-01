@@ -493,6 +493,13 @@
   }
 
   function svgWhale(cls) {
+    if (C.logoUrl) {
+      var mark = document.createElement('img')
+      mark.src = C.logoUrl
+      mark.alt = 'OpenAI / ChatGPT'
+      mark.className = 'dsu-codex-mark' + (cls ? ' ' + cls : '')
+      return mark
+    }
     var ns = 'http://www.w3.org/2000/svg'
     var svg = document.createElementNS(ns, 'svg')
     svg.setAttribute('viewBox', '0 0 50 50')
@@ -680,12 +687,12 @@
 
   ;(function logoStage() {
     ui.logo.appendChild(svgWhale())
-    ui.logo.appendChild(el('div', 'dsu-logolabel', 'D E E P S E E K'))
+    ui.logo.appendChild(el('div', 'dsu-logolabel', C.logoUrl ? 'C H A T G P T' : 'D E E P S E E K'))
   })()
 
   ;(function welcomeLogo() {
     ui.w3.appendChild(svgWhale())
-    ui.w3.appendChild(el('span', 'dsu-w3label', 'D E E P S E E K  ·  H A R N E S S'))
+    ui.w3.appendChild(el('span', 'dsu-w3label', C.logoUrl ? 'O P E N A I  ·  C O D E X' : 'D E E P S E E K  ·  H A R N E S S'))
   })()
 
   ;(function watermark() {
@@ -1208,7 +1215,7 @@
             })
           }).then(function (ms) {
             if (ms > 0) { saidOnce = true; return ms }
-            return ttsLine(en, zh)
+            return C.recordedVoiceOnly ? 0 : ttsLine(en, zh)
           })
         }
         return ttsLine(en, zh)
@@ -1301,7 +1308,7 @@
   ;(function preloadVoices() {
     if (C.voiceSource === 'tts') return
     for (var i = 0; i < STEPS.length; i++) if (STEPS[i].audio) audio.ensureAsset(STEPS[i].audio)
-    audio.ensureAsset('line-6')   /* 终幕欢迎语 */
+    audio.ensureAsset(C.welcomeAsset || 'line-6')   /* 终幕欢迎语 */
   })()
   ;(function wireSound() {
     voice.load()
@@ -1544,7 +1551,7 @@
         ui.welcome.classList.add('dsu-in')
         ui.idline.classList.remove('dsu-in')
         /* 欢迎文案亮起的同一刻开口 —— 早于画面会让人以为「话没说完画面就跳了」 */
-        welcome = voice.line(null, null, 'line-6')
+        welcome = voice.line(null, null, C.welcomeAsset || 'line-6')
         return wait(420)
       })
       .then(function () {
