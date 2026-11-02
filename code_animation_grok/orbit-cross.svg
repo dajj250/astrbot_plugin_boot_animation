@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Original black and gold orbital cross">
+  <defs>
+    <linearGradient id="metal" x1="0" y1="1" x2="1" y2="0">
+      <stop stop-color="#886232"/><stop offset=".48" stop-color="#d5ae6d"/><stop offset="1" stop-color="#f1d6a0"/>
+    </linearGradient>
+  </defs>
+  <path d="M64 7 76 47 118 64 76 81 64 121 52 81 10 64 52 47Z" fill="none" stroke="url(#metal)" stroke-width="2.5" stroke-linejoin="round" opacity=".72"/>
+  <path d="M33 27 64 53 95 27 101 33 75 64 101 95 95 101 64 75 33 101 27 95 53 64 27 33Z" fill="#100e0b" stroke="url(#metal)" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M64 51 77 64 64 77 51 64Z" fill="url(#metal)"/>
+  <path d="M64 15V32M64 96v17M15 64h17m64 0h17" stroke="#f1d6a0" stroke-width="2" opacity=".55"/>
+</svg>
