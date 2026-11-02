@@ -45,7 +45,17 @@ IndexTTS 2.5 using the original recording as its voice reference, then matched
 to the original interval's duration and loudness. The generated word may still
 differ in timbre. The original recording's rights and limitations still apply.
 
-`assets/videos/codex-startup-2k-144fps-crf16.mp4` and
-`assets/videos/whale-fantasy-loop.mp4` were supplied by the user from their local
-AstrBot instances and included without transcoding. Inclusion does not grant
-additional rights to third-party imagery or trademarks appearing in the videos.
+`code_animation_grok/orbit-cross.svg` and `rain.js` are original, independent
+black-and-gold theme artwork. They do not reproduce the supplied reference image
+or an official Grok/X logo. “Grok style” describes the requested aesthetic and
+does not imply affiliation, approval or sponsorship by xAI or X.
+
+`code_animation/assets/line-6-grok.mp3` preserves the original welcome recording
+outside the brand-name interval. The replacement word was synthesized locally,
+then matched to the original interval's duration and loudness. Rights and
+limitations of the underlying recording still apply.
+
+Earlier releases included `codex-startup-2k-144fps-crf16.mp4` and
+`whale-fantasy-loop.mp4`, supplied by the user from local AstrBot instances.
+The v1.1.5 installer contains no video files. Downloading or redistributing
+older video assets does not grant rights to third-party imagery or trademarks.

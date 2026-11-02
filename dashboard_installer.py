@@ -115,8 +115,8 @@ def normalize_config(config: Any, available_clips: list[str]) -> dict[str, Any]:
         selected = available_clips
     selected_set = {item for item in selected if isinstance(item, str)}
     clips = [name for name in available_clips if name in selected_set]
-    if not clips and available_clips:
-        clips = [available_clips[0]]
+    if not clips:
+        clips = available_clips[:]
 
     fade_raw = str(read("fade_ms", "2000"))
     fade_ms = int(fade_raw) if fade_raw in {"1000", "1500", "2000", "3000", "4000"} else 2000
@@ -124,11 +124,11 @@ def normalize_config(config: Any, available_clips: list[str]) -> dict[str, Any]:
     if entry_mode not in {"crossfade", "after", "click"}:
         entry_mode = "crossfade"
 
-    code_animation_mode = read("code_animation_mode", "off")
+    code_animation_mode = read("code_animation_mode", "only")
     if code_animation_mode not in {"off", "before_video", "only"}:
         code_animation_mode = "off"
     code_animation_style = read("code_animation_style", "original")
-    if code_animation_style not in {"original", "gpt_codex", "gemini", "claude"}:
+    if code_animation_style not in {"original", "gpt_codex", "gemini", "claude", "grok", "random"}:
         code_animation_style = "original"
     code_animation_theme = read("code_animation_theme", "light")
     if code_animation_theme not in {"light", "dark"}:
@@ -141,7 +141,7 @@ def normalize_config(config: Any, available_clips: list[str]) -> dict[str, Any]:
     )
 
     play_sequence = read("play_sequence", "single")
-    if play_sequence not in {"single", "double"}:
+    if play_sequence not in {"single", "double", "random"}:
         play_sequence = "single"
 
     def selected_clip(key: str, fallback: str) -> str:
@@ -158,9 +158,9 @@ def normalize_config(config: Any, available_clips: list[str]) -> dict[str, Any]:
     opening_clip = selected_clip("opening_clip", "codex-startup-2k-144fps-crf16.mp4")
     closing_clip = selected_clip("closing_clip", "whale-fantasy-loop.mp4")
     sequence = (
-        [opening_clip, closing_clip]
-        if play_sequence == "double"
-        else [single_clip]
+        [] if play_sequence == "random" else
+        [opening_clip, closing_clip] if play_sequence == "double" else
+        [single_clip]
     )
     sequence = [name for name in sequence if name]
 
@@ -233,7 +233,13 @@ def install_assets(plugin_dir: Path, dist_dir: Path, config: Any) -> dict[str, A
     shutil.copytree(claude_animation_source, claude_animation_target, dirs_exist_ok=True,
                     copy_function=_copy_if_changed, ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
 
+    grok_animation_source = plugin_dir / "code_animation_grok"
+    grok_animation_target = target / "code-animation-grok"
+    shutil.copytree(grok_animation_source, grok_animation_target, dirs_exist_ok=True,
+                    copy_function=_copy_if_changed, ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
+
     source_dir = plugin_dir / "assets" / "videos"
+    source_dir.mkdir(parents=True, exist_ok=True)
     available = sorted(
         path.name
         for path in source_dir.iterdir()

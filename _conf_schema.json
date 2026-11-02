@@ -26,7 +26,7 @@
   "code_animation_mode": {
     "description": "代码启动动画",
     "type": "string",
-    "default": "off",
+    "default": "only",
     "options": [
       "off",
       "before_video",
@@ -51,19 +51,25 @@
       "original",
       "gpt_codex",
       "gemini",
-      "claude"
+      "claude",
+      "grok",
+      "random"
     ],
     "labels": [
-      "DeepSeek 风格",
-      "Codex 风格",
-      "Gemini 风格",
-      "Claude 风格"
+      "DeepSeek 风格（非官方）",
+      "Codex 风格（非官方）",
+      "Gemini 风格（非官方）",
+      "Claude 风格（非官方）",
+      "Grok 风格（非官方）",
+      "随机选择一种风格"
     ],
     "subtitles": [
       "深色代码启动动画与原始分幕流程",
       "Codex 编程运行时界面与专属欢迎语",
       "Gemini 四角星、淡彩虹背景、彩色星流与专属欢迎语",
-      "Claude 风格菊花、淡橙背景、金色花流与专属欢迎语"
+      "Claude 风格菊花、淡橙背景、金色花流与专属欢迎语",
+      "原创黑金交叉星、稀疏 X 形代码雨与 Grok 风格欢迎语",
+      "每次打开面板时从五种代码动画中随机选择"
     ]
   },
   "code_animation_theme": {
@@ -159,15 +165,18 @@
     "default": "single",
     "options": [
       "single",
-      "double"
+      "double",
+      "random"
     ],
     "labels": [
       "只播放一段视频",
-      "依次播放前后两段视频"
+      "依次播放前后两段视频",
+      "随机播放一段视频"
     ],
     "subtitles": [
       "播放单段视频后进入面板",
-      "先播放前段，再播放后段，最后进入面板"
+      "先播放前段，再播放后段，最后进入面板",
+      "每次打开面板时从已下载或自行添加的视频中随机选择"
     ]
   },
   "single_clip": {
@@ -194,21 +203,28 @@
     "default": false,
     "hint": "打开后保存配置，插件会跳转到 assets/videos 文件夹，并自动把此开关复位。"
   },
+  "open_video_download_page": {
+    "description": "打开视频下载页（GitHub）",
+    "type": "bool",
+    "default": false,
+    "hint": "开启并保存、重载插件后，会在本机默认浏览器打开 https://github.com/dajj250/astrbot_plugin_boot_animation/releases 。下载视频后放进 assets/videos 文件夹，再重载插件。此操作不会自动下载文件。"
+  },
   "clips": {
     "description": "素材池",
     "type": "list",
-    "default": [
-      "codex-startup-2k-144fps-crf16.mp4",
-      "whale-fantasy-loop.mp4"
-    ],
+    "default": [],
     "options": [
       "codex-startup-2k-144fps-crf16.mp4",
-      "whale-fantasy-loop.mp4"
+      "whale-fantasy-loop.mp4",
+      "claude_startup_petals_v3.mp4",
+      "gemini_startup_exquisite_v2.mp4"
     ],
     "labels": [
-      "Codex 2K 144fps 启动片头",
-      "梦幻鲸鱼循环影片"
+      "Codex 2K 144fps 启动片头（需下载）",
+      "梦幻鲸鱼循环影片（需下载）",
+      "Claude 花瓣片头（需下载）",
+      "Gemini 星光片头（需下载）"
     ],
-    "hint": "勾选参与随机播放的影片。也可以把 mp4/webm/m4v/mov 文件放入插件的 assets/videos 目录，然后重载插件。"
+    "hint": "留空时随机池包含 assets/videos 中全部视频；勾选后只在所选且实际存在的视频中随机。可通过下载页获取影片，也可自行放入 mp4/webm/m4v/mov 文件。"
   }
 }

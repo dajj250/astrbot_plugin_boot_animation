@@ -5,6 +5,7 @@ from __future__ import annotations
 import os
 import subprocess
 import sys
+import webbrowser
 from pathlib import Path
 
 from astrbot.api import AstrBotConfig, logger
@@ -18,6 +19,7 @@ class BootAnimationPlugin(Star):
         super().__init__(context)
         self.plugin_dir = Path(__file__).resolve().parent
         self._open_video_folder_if_requested(config)
+        self._open_video_download_page_if_requested(config)
         self.dist_dir = find_dashboard_dist(self.plugin_dir)
 
         if self.dist_dir is None:
@@ -64,6 +66,27 @@ class BootAnimationPlugin(Star):
                     save()
                 except Exception as exc:
                     logger.warning(f"[启动动画] 无法自动复位文件夹开关：{exc}")
+
+    def _open_video_download_page_if_requested(self, config: AstrBotConfig) -> None:
+        """Open the repository release page after the user requests it in settings."""
+        if config.get("open_video_download_page", False) is not True:
+            return
+        url = "https://github.com/dajj250/astrbot_plugin_boot_animation/releases"
+        try:
+            if webbrowser.open(url):
+                logger.info(f"[启动动画] 已打开视频下载页：{url}")
+            else:
+                logger.warning(f"[启动动画] 无法打开浏览器，请手动访问：{url}")
+        except Exception as exc:
+            logger.warning(f"[启动动画] 无法打开视频下载页 {url}：{exc}")
+        finally:
+            config["open_video_download_page"] = False
+            save = getattr(config, "save_config", None)
+            if callable(save):
+                try:
+                    save()
+                except Exception as exc:
+                    logger.warning(f"[启动动画] 无法自动复位下载页开关：{exc}")
 
     async def terminate(self):
         """Remove the active injection when the plugin is disabled or uninstalled."""
