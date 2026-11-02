@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Claude-style gold flower">
+  <defs>
+    <linearGradient id="gold" x1="0" y1="1" x2="1" y2="0">
+      <stop stop-color="#bf704a"/><stop offset=".55" stop-color="#d19a55"/><stop offset="1" stop-color="#ddbd72"/>
+    </linearGradient>
+    <path id="petal" d="M61 47C54 31 57 18 64 5C71 18 74 31 67 47" fill="none" stroke="url(#gold)" stroke-width="3.7" stroke-linecap="round" stroke-linejoin="round"/>
+  </defs>
+  <g>
+    <use href="#petal"/><use href="#petal" transform="rotate(22.5 64 64)"/>
+    <use href="#petal" transform="rotate(45 64 64)"/><use href="#petal" transform="rotate(67.5 64 64)"/>
+    <use href="#petal" transform="rotate(90 64 64)"/><use href="#petal" transform="rotate(112.5 64 64)"/>
+    <use href="#petal" transform="rotate(135 64 64)"/><use href="#petal" transform="rotate(157.5 64 64)"/>
+    <use href="#petal" transform="rotate(180 64 64)"/><use href="#petal" transform="rotate(202.5 64 64)"/>
+    <use href="#petal" transform="rotate(225 64 64)"/><use href="#petal" transform="rotate(247.5 64 64)"/>
+    <use href="#petal" transform="rotate(270 64 64)"/><use href="#petal" transform="rotate(292.5 64 64)"/>
+    <use href="#petal" transform="rotate(315 64 64)"/><use href="#petal" transform="rotate(337.5 64 64)"/>
+  </g>
+  <circle cx="64" cy="64" r="18.5" fill="url(#gold)" stroke="#f5dbab" stroke-width="1.5"/>
+</svg>
