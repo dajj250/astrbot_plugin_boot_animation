@@ -81,3 +81,11 @@ test('unrelated same-origin messages cannot dismiss the code animation',()=>{
 test('before-video mode can still run code animation without video assets',()=>{
   const run=setup({codeAnimationMode:'before_video',clips:[],sequence:[]});assert.ok(run.find('astrbot-code-animation-frame'));
 });
+test('random video ignores a fixed sequence and picks an available clip',()=>{
+  const run=setup({playSequence:'random',clips:['a.mp4','b.mp4'],sequence:['missing.mp4']});
+  assert.match(run.video.src,/\/(a|b)\.mp4$/);
+});
+test('random code style selects one of the installed animation pages',()=>{
+  const run=setup({codeAnimationMode:'only',codeAnimationStyle:'random'});
+  assert.match(run.find('astrbot-code-animation-frame').src,/\/code-animation(?:-gpt|-gemini|-claude|-grok)?\/index\.html$/);
+});

@@ -50,7 +50,7 @@ class DashboardInstallerTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as folder:
             root = Path(folder)
             plugin = root / 'plugin'
-            shutil.copytree(plugin_dir, plugin, ignore=shutil.ignore_patterns('__pycache__'))
+            shutil.copytree(plugin_dir, plugin, ignore=shutil.ignore_patterns('__pycache__', '.test-temp'))
             dist = root / 'dist'
             cache = dist / 'astrbot-boot-animation/videos'
             cache.mkdir(parents=True)
@@ -62,7 +62,8 @@ class DashboardInstallerTests(unittest.TestCase):
                 'opening_clip': 'deepseek-awakening-intro.mp4',
                 'closing_clip': 'deepseek-startup-intro.mp4',
             })
-            self.assertEqual(config['sequence'], ['codex-startup-2k-144fps-crf16.mp4', 'whale-fantasy-loop.mp4'])
+            self.assertEqual(config['sequence'], [])
+            self.assertEqual(config['clips'], [])
             self.assertFalse(set(config['clips']) & RETIRED_CLIPS)
             self.assertFalse(set(path.name for path in cache.iterdir()) & RETIRED_CLIPS)
 
@@ -98,7 +99,7 @@ class DashboardInstallerTests(unittest.TestCase):
         self.assertEqual(result["entryMode"], "crossfade")
         self.assertEqual(result["clips"], ["b.mp4"])
         self.assertTrue(result["enabled"])
-        self.assertEqual(result["codeAnimationMode"], "off")
+        self.assertEqual(result["codeAnimationMode"], "only")
         self.assertEqual(result["codeAnimationStyle"], "original")
 
     def test_single_and_double_clip_sequences(self):
@@ -139,14 +140,15 @@ class DashboardInstallerTests(unittest.TestCase):
             self.assertTrue((target / "boot.js").is_file())
             self.assertTrue((target / "boot.css").is_file())
             self.assertIn('"entryMode":"after"', (target / "config.js").read_text("utf-8"))
-            self.assertEqual(config["clips"], ["codex-startup-2k-144fps-crf16.mp4"])
-            self.assertTrue((target / "videos" / "codex-startup-2k-144fps-crf16.mp4").is_file())
+            self.assertEqual(config["clips"], [])
+            self.assertEqual(list((target / "videos").iterdir()), [])
             self.assertTrue((target / "code-animation" / "index.html").is_file())
             self.assertTrue((target / "code-animation" / "splash.js").is_file())
             self.assertTrue((target / "code-animation" / "splash.css").is_file())
             self.assertTrue((target / "code-animation" / "assets" / "line-1.mp3").is_file())
             self.assertTrue((target / "code-animation-gpt" / "index.html").is_file())
             self.assertTrue((target / "code-animation-gpt" / "app.js").is_file())
+            self.assertTrue((target / "code-animation-gpt" / "codex-reference-mark.png").is_file())
 
     def test_client_is_boot_only_without_panel_background_or_progress_bar(self):
         plugin_dir = Path(__file__).resolve().parent.parent
@@ -179,18 +181,20 @@ class DashboardInstallerTests(unittest.TestCase):
 
         plugin_dir = Path(__file__).resolve().parent.parent
         schema = json.loads((plugin_dir / "_conf_schema.json").read_text("utf-8"))
-        self.assertEqual(schema["play_sequence"]["options"], ["single", "double"])
+        self.assertEqual(schema["play_sequence"]["options"], ["single", "double", "random"])
         self.assertIn("single_clip", schema)
         self.assertIn("opening_clip", schema)
         self.assertIn("closing_clip", schema)
         self.assertIn("open_video_folder", schema)
+        self.assertIn("open_video_download_page", schema)
         self.assertEqual(
             schema["code_animation_mode"]["options"],
             ["off", "before_video", "only"],
         )
         self.assertIn("code_animation_theme", schema)
-        self.assertEqual(schema["code_animation_style"]["options"], ["original", "gpt_codex", "gemini"])
+        self.assertEqual(schema["code_animation_style"]["options"], ["original", "gpt_codex", "gemini", "claude", "grok", "random"])
         self.assertIn("code_animation_speed", schema)
+        self.assertEqual(schema["code_animation_speed"]["options"][-2:], ["5", "10"])
         self.assertIn("code_animation_interactive", schema)
         self.assertIn("code_animation_sound", schema)
 
@@ -212,6 +216,19 @@ class DashboardInstallerTests(unittest.TestCase):
         self.assertEqual(result["codeAnimationSpeed"], 1.5)
         self.assertTrue(result["codeAnimationInteractive"])
         self.assertTrue(result["codeAnimationSound"])
+        for speed in ("5", "10"):
+            with self.subTest(speed=speed):
+                fast = normalize_config({"code_animation_speed": speed}, [])
+                self.assertEqual(fast["codeAnimationSpeed"], float(speed))
+
+    def test_random_modes_use_available_local_media(self):
+        result = normalize_config({
+            "play_sequence": "random", "code_animation_style": "random", "clips": []
+        }, ["a.mp4", "b.mp4"])
+        self.assertEqual(result["playSequence"], "random")
+        self.assertEqual(result["codeAnimationStyle"], "random")
+        self.assertEqual(result["clips"], ["a.mp4", "b.mp4"])
+        self.assertEqual(result["sequence"], [])
 
     def test_gemini_installs_complete_page_and_audio(self):
         import re
@@ -245,6 +262,64 @@ class DashboardInstallerTests(unittest.TestCase):
                 self.assertEqual((target/f'code-animation/assets/line-{number}.mp3').read_bytes(),
                                  (plugin_dir/f'code_animation/assets/line-{number}.mp3').read_bytes())
 
+    def test_claude_installs_complete_page_and_audio(self):
+        import re
+        from urllib.parse import urljoin
+        plugin_dir = Path(__file__).resolve().parent.parent
+        with tempfile.TemporaryDirectory() as folder:
+            dist = Path(folder)
+            config = install_assets(plugin_dir, dist, {
+                'code_animation_style': 'claude', 'code_animation_mode': 'only',
+                'code_animation_interactive': True, 'code_animation_sound': True,
+            })
+            self.assertEqual(config['codeAnimationStyle'], 'claude')
+            target = dist / 'astrbot-boot-animation'
+            markup = (target / 'code-animation-claude/index.html').read_text('utf-8')
+            self.assertIn("identityId:'0004'", markup)
+            self.assertIn("welcomeAsset:'line-6-claude'", markup)
+            self.assertIn("recordedVoiceOnly:true", markup)
+            page = 'http://preview/code-animation-claude/index.html'
+            base = urljoin(page, re.search(r'<base href="([^"]+)"', markup)[1])
+            for link in re.findall(r'(?:src|href)="([^"]+)"', markup):
+                if link == '../code-animation/':
+                    continue
+                path = urljoin(base, link).split('http://preview/', 1)[1]
+                self.assertTrue((target / path).is_file(), path)
+            self.assertTrue((target / 'code-animation-claude/claude-flower.svg').is_file())
+            self.assertTrue((target / 'code-animation-claude/flowers.js').is_file())
+            self.assertGreater((target / 'code-animation/assets/line-6-claude.mp3').stat().st_size, 1000)
+            for number in range(1, 6):
+                self.assertEqual((target / f'code-animation/assets/line-{number}.mp3').read_bytes(),
+                                 (plugin_dir / f'code_animation/assets/line-{number}.mp3').read_bytes())
+
+    def test_grok_installs_original_mark_and_recorded_welcome(self):
+        import re
+        from urllib.parse import urljoin
+        plugin_dir = Path(__file__).resolve().parent.parent
+        with tempfile.TemporaryDirectory() as folder:
+            target = Path(folder) / 'astrbot-boot-animation'
+            config = install_assets(plugin_dir, Path(folder), {
+                'code_animation_style': 'grok', 'code_animation_mode': 'only',
+                'code_animation_sound': True,
+            })
+            self.assertEqual(config['codeAnimationStyle'], 'grok')
+            markup = (target / 'code-animation-grok/index.html').read_text('utf-8')
+            self.assertIn("identityId:'0005'", markup)
+            self.assertIn("welcomeAsset:'line-6-grok'", markup)
+            self.assertIn('recordedVoiceOnly:true', markup)
+            self.assertNotIn('claude-flower', markup)
+            page = 'http://preview/code-animation-grok/index.html'
+            base = urljoin(page, re.search(r'<base href="([^"]+)"', markup)[1])
+            for link in re.findall(r'(?:src|href)="([^"]+)"', markup):
+                if link == '../code-animation/':
+                    continue
+                path = urljoin(base, link).split('http://preview/', 1)[1]
+                self.assertTrue((target / path).is_file(), path)
+            self.assertGreater((target / 'code-animation/assets/line-6-grok.mp3').stat().st_size, 1000)
+            for number in range(1, 6):
+                self.assertEqual((target / f'code-animation/assets/line-{number}.mp3').read_bytes(),
+                                 (plugin_dir / f'code_animation/assets/line-{number}.mp3').read_bytes())
+
     def test_gpt_animation_reuses_original_runtime_and_audio(self):
         plugin_dir = Path(__file__).resolve().parent.parent
         script = (plugin_dir / "code_animation" / "splash.js").read_text("utf-8")
@@ -261,7 +336,7 @@ class DashboardInstallerTests(unittest.TestCase):
         self.assertGreater((plugin_dir / 'code_animation' / 'assets' / 'line-6-chatgpt.mp3').stat().st_size, 1000)
         for number in range(1, 7):
             self.assertGreater((plugin_dir / 'code_animation' / 'assets' / f'line-{number}.mp3').stat().st_size, 1000)
-        self.assertTrue((plugin_dir / 'code_animation_gpt' / 'openai-white-monoblossom.svg').is_file())
+        self.assertTrue((plugin_dir / 'code_animation_gpt' / 'codex-reference-mark.png').is_file())
         self.assertTrue((plugin_dir / 'code_animation_gpt' / 'rain.js').is_file())
 
 
