@@ -19,7 +19,9 @@
   const fallbackClip = hasVideoClips
     ? config.clips[Math.floor(Math.random() * config.clips.length)]
     : '';
-  const sequence = Array.isArray(config.sequence) && config.sequence.length
+  const sequence = config.playSequence === 'random' && hasVideoClips
+    ? [config.clips[Math.floor(Math.random() * config.clips.length)]]
+    : Array.isArray(config.sequence) && config.sequence.length
     ? config.sequence.filter((name) => typeof name === 'string' && name.length > 0)
     : [fallbackClip];
   if (sequence.length === 0) sequence.push(fallbackClip);
@@ -317,8 +319,13 @@
       original: 'code-animation',
       gpt_codex: 'code-animation-gpt',
       gemini: 'code-animation-gemini',
+      claude: 'code-animation-claude',
+      grok: 'code-animation-grok',
     };
-    const codeAnimationPath = codeAnimationPaths[config.codeAnimationStyle] || 'code-animation';
+    const style = config.codeAnimationStyle === 'random'
+      ? Object.keys(codeAnimationPaths)[Math.floor(Math.random() * Object.keys(codeAnimationPaths).length)]
+      : config.codeAnimationStyle;
+    const codeAnimationPath = codeAnimationPaths[style] || 'code-animation';
     codeFrame.src = `/astrbot-boot-animation/${codeAnimationPath}/index.html`;
     codeFrame.addEventListener('error', finishCodeAnimation, { once: true });
     window.addEventListener('message', handleCodeAnimationMessage);
