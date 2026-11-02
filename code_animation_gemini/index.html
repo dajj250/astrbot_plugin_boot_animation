@@ -2,7 +2,7 @@
 <html lang="zh-CN"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <base href="../code-animation/">
-<title>Gemini 启动序列</title>
+<title>Gemini 风格启动序列（非官方）</title>
 <link rel="stylesheet" href="./splash.css">
 <link rel="stylesheet" href="../code-animation-gemini/gemini.css">
 </head><body>
@@ -12,17 +12,17 @@
   var c = {}; try { c = parent.__ASTRBOT_BOOT_ANIMATION__ || {}; } catch (_) {}
   window.__DSH_STARTUP_SCRIPT_URL__ = './splash.js';
   window.__DSH_STARTUP__ = {
-    enabled:true, mode:'always', revision:'1.1.4', theme:c.codeAnimationTheme==='dark'?'dark':'light',
+    enabled:true, mode:'always', revision:'1.1.5', theme:c.codeAnimationTheme==='dark'?'dark':'light',
     speed:Number(c.codeAnimationSpeed)||1,
     requireInteraction:c.codeAnimationInteractive===true, allowSkip:true,
     sound:c.codeAnimationSound===true, voice:c.codeAnimationSound===true,
     voiceSource:'asset', recordedVoiceOnly:true, sfx:'audio',
     identity:'ASTRBOT', identityId:'0003', accessLevel:'3',
-    brand1:'GEMINI', brand2:'GOOGLE / AI', brand3a:'AGENT', brand3b:'OS',
-    orgZh:'Gemini', orgEn:'GEMINI', orgSub:'GOOGLE · MULTIMODAL INTELLIGENCE',
-    welcomeBox:'GEMINI', footer:'POWERED BY GEMINI',
+    brand1:'GEMINI STYLE', brand2:'AI VISUAL THEME · UNOFFICIAL', brand3a:'AGENT', brand3b:'OS',
+    orgZh:'Gemini 风格', orgEn:'GEMINI STYLE', orgSub:'INDEPENDENT FAN THEME · ASTRBOT',
+    welcomeBox:'GEMINI STYLE', footer:'GEMINI STYLE · ASTRBOT · UNOFFICIAL',
     logoUrl:'../code-animation-gemini/gemini-star.svg', logoAlt:'Gemini 四角星',
-    logoLabel:'G E M I N I', welcomeLogoLabel:'G O O G L E  ·  G E M I N I',
+    logoLabel:'G E M I N I  S T Y L E', welcomeLogoLabel:'G E M I N I  S T Y L E  ·  A S T R B O T',
     welcomeAsset:'line-6-gemini',
     accent:'#6479d4', glitchA:'#b97ac6', glitchB:'#6aadd4'
   };
